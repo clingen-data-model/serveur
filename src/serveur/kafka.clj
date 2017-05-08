@@ -3,12 +3,18 @@
            [org.apache.kafka.clients.consumer KafkaConsumer Consumer ConsumerRecord]))
 
 (def client-properties
-  {"bootstrap.servers" "localhost:9092"
+  {"bootstrap.servers" "tndeb:9093"
    "group.id" "test"
    "enable.auto.commit" "true"
    "auto.commit.interval.ms" "1000"
    "key.deserializer" "org.apache.kafka.common.serialization.StringDeserializer"
-   "value.deserializer" "org.apache.kafka.common.serialization.StringDeserializer"})
+   "value.deserializer" "org.apache.kafka.common.serialization.StringDeserializer"
+   "security.protocol" "SSL"
+   "ssl.truststore.location" "ssl/client.truststore.jks"
+   "ssl.truststore.password" "test1234"
+   "ssl.keystore.location" "ssl/client.keystore.jks"
+   "ssl.keystore.password" "test1234"
+   "ssl.key.password" "test1234"})
 
 ;; Java Properties object defining configuration of Kafka client
 (defn client-configuration 
