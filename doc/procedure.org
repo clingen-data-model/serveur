@@ -1,0 +1,41 @@
+* Basic questions
+
+Begin with a flattened document structure; import to Neo4j handled according to document type.
+
+** Schema (guaranteed properties?)
+
+Per type, there are a number of properties that should be guaranteed to exist. These need to be listed somewhere (ideally noted in OWL file?)
+
+Unless we're just augmenting known data about a file, how to handle in this case?
+
+** Do we read as a sequence of triples, or do we read as a flattened document?
+
+** How to handle blank nodes?
+
+Under what circumstances do we construct an IRI for a portion of a document not containing one?
+
+How might we handle nested structures that are wholy subordinate to the parent?
+
+How is this annotated? (OWL file, other?)
+
+How is this typed?
+
+** Display of typed properties
+
+Ideally every *type* of entity has a display associated with it. This isn't rocket science, though there might be considerations when we're moving between pre-rendered pages and the other sort. (should we consider using the LD library for this?)
+
+There should be an enumeration of properties requiring display.
+
+How does this translate into display templates?
+
+** Immutability
+
+To what extent do we maintain the accessibility of previous curations? This (necessarily) means maintaining unique IRIs for new curations. Do the interfaces support this activity? Can the search adapt to generate unique IRIs; how should the data exchange work in this instance?
+
+It's going to take some serious work to support immutability--this is something that would best be addressed by the interfaces, and I don't think they're likely to do it.
+
+Incidentally, can I support immutability in the dosage curation interface?
+
+** Enumeration of types
+
+Can this be supported in the OWL file?

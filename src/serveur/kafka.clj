@@ -4,17 +4,17 @@
 
 (def client-properties
   {"bootstrap.servers" "tndeb:9093"
-   "group.id" "test"
+   "group.id" "serveur"
    "enable.auto.commit" "true"
    "auto.commit.interval.ms" "1000"
    "key.deserializer" "org.apache.kafka.common.serialization.StringDeserializer"
    "value.deserializer" "org.apache.kafka.common.serialization.StringDeserializer"
    "security.protocol" "SSL"
-   "ssl.truststore.location" "ssl/client.truststore.jks"
-   "ssl.truststore.password" "test1234"
-   "ssl.keystore.location" "ssl/client.keystore.jks"
-   "ssl.keystore.password" "test1234"
-   "ssl.key.password" "test1234"})
+   "ssl.truststore.location" "keys/serveur.truststore.jks"
+   "ssl.truststore.password" (System/getenv "SERVEUR_KEY_PASS")
+   "ssl.keystore.location" "keys/serveur.keystore.jks"
+   "ssl.keystore.password" (System/getenv "SERVEUR_KEY_PASS")
+   "ssl.key.password" (System/getenv "SERVEUR_KEY_PASS")})
 
 ;; Java Properties object defining configuration of Kafka client
 (defn client-configuration 
