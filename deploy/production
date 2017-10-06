@@ -1,0 +1,2 @@
+[kafka]
+exchange.clinicalgenome.org ansible_user=ubuntu ansible_ssh_private_key_file=/Users/tristan/Dropbox/clingen/clinicalgenome.org.key

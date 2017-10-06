@@ -1,0 +1,16 @@
+[Unit]
+Description=ClinGen Data Exchange serveur
+After=network.target
+
+[Service]
+Type=simple
+User=serveur
+Group=serveur
+WorkingDirectory=/usr/local/serveur
+Environment=SERVEUR_KEY_PASS={{ serveur_key_pass }}
+Environment=DATA_EXCHANGE_HOST={{ data_exchange_host }}
+ExecStart=/usr/bin/java -jar /usr/local/serveur/lib/serveur-0.1.0-SNAPSHOT-standalone.jar
+ExecStop=/bin/kill -TERM $MAINPID
+
+[Install]
+WantedBy=multi-user.target

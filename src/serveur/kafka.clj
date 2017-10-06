@@ -3,7 +3,7 @@
            [org.apache.kafka.clients.consumer KafkaConsumer Consumer ConsumerRecord]))
 
 (def client-properties
-  {"bootstrap.servers" "tndeb:9093"
+  {"bootstrap.servers" (System/getenv "DATA_EXCHANGE_HOST")
    "group.id" "serveur"
    "enable.auto.commit" "true"
    "auto.commit.interval.ms" "1000"

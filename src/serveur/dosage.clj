@@ -1,7 +1,8 @@
 (ns serveur.dosage
   (:require [serveur.kafka :as kafka]
             [serveur.neo4j :as neo]
-            [cheshire.core :as json]))
+            [cheshire.core :as json]
+            [clojure.tools.logging :as log]))
 
 (defn import-dosage-record
   "Import a single gene-dosage record into neo4j"
@@ -9,6 +10,8 @@
   ;; (spit (str "./log/" (re-find #"[\w-]+$" (.key record))) record)
   (let [interp (-> record .value json/parse-string)]
     (println "importing: " (interp "iri"))
+    (log/info "importing: " (interp "iri"))
+    ;; TODO clear relations before updating an assertion
     (.run session "match (g:Gene {iri: $gene}), (i:RDFClass {iri: $interpretation}) merge (a:GeneDosageAssertion:Assertion:Entity {iri: $iri}) set a.date = $modified merge (a)-[:has_subject]->(g) merge (a)-[:has_predicate]->(i) with a match (d:RDFClass {iri: $phenotype}) merge (a)-[:has_object]->(d)" interp)))
 
 (defn update-loop

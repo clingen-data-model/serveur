@@ -36,7 +36,6 @@
   `(let [driver# (GraphDatabase/driver "bolt://localhost" (AuthTokens/basic "neo4j" "clingen"))
          ~s (.session driver#)
          result# (do ~@body)]
-
      (.close ~s)
      (.close driver#)
      result#))
