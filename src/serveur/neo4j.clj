@@ -33,7 +33,7 @@
   "Connect to neo4j, make driver and session accessible to code
   clean up after"
   [[s] & body]
-  `(let [driver# (GraphDatabase/driver "bolt://localhost" (AuthTokens/basic "neo4j" "clingen"))
+  `(let [driver# (GraphDatabase/driver (System/getenv "NEO4J_SERVER_PATH") (AuthTokens/basic (System/getenv "NEO4J_USER") (System/getenv "NEO4J_PASS")))
          ~s (.session driver#)
          result# (do ~@body)]
      (.close ~s)

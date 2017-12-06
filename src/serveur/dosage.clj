@@ -10,6 +10,7 @@
   [record session]
   ;; (spit (str "./log/" (re-find #"[\w-]+$" (.key record))) record)
   (let [interp (-> record .value json/parse-string)]
+    (pprint interp)
     (println "importing: " (interp "iri"))
     (log/info "importing: " (with-out-str (pprint interp)))
     ;; TODO clear relations before updating an assertion
