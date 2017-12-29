@@ -10,6 +10,7 @@
                  [org.neo4j.driver/neo4j-java-driver "1.4.4"]
                  [org.clojure/tools.logging "0.4.0"]
                  [org.slf4j/slf4j-log4j12 "1.7.25"]
+                 [org.clojure/tools.cli "0.3.5"]
                  [grafter "0.10.1"]
                  [log4j/log4j "1.2.17" :exclusions [javax.mail/mail
                                                     javax.jms/jms

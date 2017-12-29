@@ -11,10 +11,14 @@
   ;; (spit (str "./log/" (re-find #"[\w-]+$" (.key record))) record)
   (let [interp (-> record .value json/parse-string)]
     (pprint interp)
-    (println "importing: " (interp "iri"))
+    (println "importing: " (interp "id"))
     (log/info "importing: " (with-out-str (pprint interp)))
     ;; TODO clear relations before updating an assertion
-    (.run session "match (g:Gene {iri: $gene}), (i:RDFClass {iri: $interpretation}) merge (a:GeneDosageAssertion:Assertion:Entity {iri: $iri}) set a.date = $modified merge (a)-[:has_subject]->(g) merge (a)-[:has_predicate]->(i) with a match (d:RDFClass {iri: $phenotype}) merge (a)-[:has_object]->(d)" interp)))
+    (.run session "match (g:Gene {iri: $gene}), (i:RDFClass {iri: $interpretation}) merge (a:GeneDosageAssertion:Assertion:Entity {iri: $id}) set a.date = $modified merge (a)-[:has_subject]->(g) merge (a)-[:has_predicate]->(i) with a match (d:RDFClass {iri: $phenotype}) merge (a)-[:has_object]->(d)" interp)))
+
+(defn import-region-dosage-record
+  "Import a single region-dosage record into neo4j"
+  [record session])
 
 (defn update-loop
   "Poll kafka for updates and import to knowledge base"

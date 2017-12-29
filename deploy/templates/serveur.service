@@ -11,7 +11,7 @@ Environment=SERVEUR_KEY_PASS={{ serveur_key_pass }}
 Environment=DATA_EXCHANGE_HOST={{ data_exchange_host }}
 Environment=NEO4J_SERVER_PATH={{ neo4j_server }}
 Environment=NEO4J_USER={{ neo4j_user }}
-Environment=NEO4J-PASS={{ neo4j_password }}
+Environment=NEO4J_PASS={{ neo4j_password }}
 ExecStart=/usr/bin/java -jar /usr/local/serveur/lib/serveur-0.1.0-SNAPSHOT-standalone.jar
 ExecStop=/bin/kill -TERM $MAINPID
 
