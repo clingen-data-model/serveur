@@ -9,12 +9,10 @@
   "Import a single gene-dosage record into neo4j"
   [record session]
   ;; (spit (str "./log/" (re-find #"[\w-]+$" (.key record))) record)
-  (let [interp (-> record .value json/parse-string)]
-    (pprint interp)
-    (println "importing: " (interp "id"))
-    (log/info "importing: " (with-out-str (pprint interp)))
-    ;; TODO clear relations before updating an assertion
-    (.run session "match (g:Gene {iri: $gene}), (i:RDFClass {iri: $interpretation}) merge (a:GeneDosageAssertion:Assertion:Entity {iri: $id}) set a.date = $modified merge (a)-[:has_subject]->(g) merge (a)-[:has_predicate]->(i) with a match (d:RDFClass {iri: $phenotype}) merge (a)-[:has_object]->(d)" interp)))
+  (println "importing: " (record "id"))
+  (log/info "importing: " (with-out-str (pprint record)))
+  ;; TODO clear relations before updating an assertion
+  (.run session "match (g:Gene {iri: $gene}), (i:RDFClass {iri: $interpretation}) merge (a:GeneDosageAssertion:Assertion:Entity {iri: $id}) set a.date = $modified merge (a)-[:has_subject]->(g) merge (a)-[:has_predicate]->(i) with a match (d:RDFClass {iri: $phenotype}) merge (a)-[:has_object]->(d)" record))
 
 (defn import-region-dosage-record
   "Import a single region-dosage record into neo4j"
@@ -31,4 +29,4 @@
        (println "polling")
        (let [records (.poll consumer 1000)]
          (doseq [r (seq records)]
-           (import-dosage-record r neo-session)))))))
+           (import-dosage-record (-> r .value json/parse-string) neo-session)))))))
