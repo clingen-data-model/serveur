@@ -1,11 +1,13 @@
 all:
   hosts:
-    tndeb
+    ec2-52-89-216-229.us-west-2.compute.amazonaws.com
   vars:
-    ansible_user: tristan
-    ansible_ssh_private_key_file: /Users/tristan/.ssh/id_rsa 
-    data_exchange_host: "tndeb:9093"
-    neo4j_server: "bolt://192.168.0.220"
+    ansible_user: ubuntu
+    ansible_ssh_private_key_file: /Users/tristan/Dropbox/clingen/cg-stage.pem
+    keystore_path: ~/code/serveur/keys/stage.serveur.keystore.jks
+    kafka_group: serveur_stage
+    data_exchange_host: "exchange.clinicalgenome.org:9093"
+    neo4j_server: "bolt://localhost"
     neo4j_user: neo4j
     neo4j_password: !vault |
           $ANSIBLE_VAULT;1.1;AES256
