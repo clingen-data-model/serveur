@@ -2,22 +2,9 @@
   (:import java.util.Properties
            [org.apache.kafka.clients.consumer KafkaConsumer Consumer ConsumerRecord]))
 
-(defn truststore-path
-  []
-  (if (= (System/getenv "SERVEUR_MODE") "development")
-    "keys/dev.serveur.keystore.jks"
-    "keys/serveur.keystore.jks"))
-
-(defn group-id
-  []
-  (if (= (System/getenv "SERVEUR_MODE") "development")
-    "serveur_dev"
-    ;; "User:CN=dev.serveur.clinicalgenome.org,OU=Unknown,O=Unknown,L=New York,ST=New York,C=US"
-    "serveur"))
-
 (def client-properties
   {"bootstrap.servers" (System/getenv "DATA_EXCHANGE_HOST")
-   "group.id" (group-id)
+   "group.id" (System/getenv "SERVEUR_GROUP")
    "enable.auto.commit" "true"
    "auto.commit.interval.ms" "1000"
    "key.deserializer" "org.apache.kafka.common.serialization.StringDeserializer"
@@ -25,7 +12,7 @@
    "security.protocol" "SSL"
    "ssl.truststore.location" "keys/serveur.truststore.jks"
    "ssl.truststore.password" (System/getenv "SERVEUR_KEY_PASS")
-   "ssl.keystore.location" (truststore-path)
+   "ssl.keystore.location" (System/getenv "SERVEUR_KEYSTORE")
    "ssl.keystore.password" (System/getenv "SERVEUR_KEY_PASS")
    "ssl.key.password" (System/getenv "SERVEUR_KEY_PASS")})
 
