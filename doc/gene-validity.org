@@ -1,0 +1,42 @@
+* Handling Mondo conditions
+** Option 1: Continue to ommit MONDO terms from search
+*** Map to nearsest Orphanet term, then nearest OMIM term.
+**** Throw error in case there is no direct Orphanet equivalent? Or search for ancestors?
+*** Check for existing curation involving same gene against that term
+**** If previous curation exists, replace it
+**** Otherwise, create new curation
+** Option 2: Begin including MONDO terms in search, group equivalent conditions
+*** Map directly to MONDO condition
+*** Return cluster of equivalent conditions in search result (need to modify search to accomodate this
+*** Subroutine to follow to identify condition to replace
+* Identifying a previously published curation by the gene curation express
+** Test to see if previous condition matches by target gene and any target disease. Equivalence relationships are considered for target disease
+** Also consider mode of inheritance
+** Need to populate mode of inheritance to test this.
+* Protocol to replace existing curation.
+** Option 1
+*** Add a property in the ontology to designate a deprecated curation
+*** Assign this property to a curation that is being replaced
+*** Add a filter in any controller action to filter out curations that have been replaced
+** Option 2
+*** Add a relationship in the ontology to designate a deprecated curation (replaced_by, out of Prov perhaps?) (wasInvalidatedBy)
+*** Assign (curation)<-[:replaced-by]-(previous_curation) property to curation being replaced by previous curation.
+*** Add a filter in any controller action to filter out curations that have been replaced
+* Protocol to restore a curation after unpublishing its replacement.
+** Option 1
+*** Identify the most recent publication
+*** Use FinalClassificationDate
+**** TODO Verify this with Stanford/Scott
+*** Remove the deprecated curation property from this curation
+*** Remove the unpublished curation entirely from the database.
+** Option 2
+*** Remove the unpublished curation entirely from the database. This additionally removes the relationship marking the previous curation as being replaced
+* Serialize the score for the worksheet
+** Take the field 'scoreJson'
+** Serialize into string using using Cheshire
+** Store in field score_json_gci in neo4j
+* Affiliate ID
+** Find affiliate ID node by ID if exists
+** If does not exist, create and return
+** (need to consider creating a base IRI for affiliation ID in ClinGen Website)
+* 
