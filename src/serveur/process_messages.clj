@@ -35,13 +35,16 @@
 (defn process-kafka-messages
   "Read messages from data exchange"
   []
+  (println "opening consumer")
   (with-open [consumer (kafka/consumer)]
+    (println "Subscribing to topics: " (get-topics))
     (.subscribe consumer (get-topics))
+    (println "Open Neo4j session")
     (neo/session
      [neo-session]
-     (while true)
-     (println "polling")
-     (let [records (.poll consumer 1000)]
-       (doseq [r (seq records)]
-         (process-message (-> r .value json/parse-string) neo-session))))))
+     (while true 
+       (println "polling")
+       (let [records (.poll consumer 1000)]
+         (doseq [r (seq records)]
+           (process-message (-> r .value json/parse-string) neo-session)))))))
 

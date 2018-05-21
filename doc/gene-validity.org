@@ -39,4 +39,6 @@
 ** Find affiliate ID node by ID if exists
 ** If does not exist, create and return
 ** (need to consider creating a base IRI for affiliation ID in ClinGen Website)
-* 
+* Issues
+** Range of values for Final (other) classifications
+*** "FinalClassification": "No Modification",

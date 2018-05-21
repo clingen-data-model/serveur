@@ -36,7 +36,11 @@
 (defn get-significance
   "Given the message, return the appropriate clinical significance value"
   [message]
-  (get significance-map (get-in message ["scoreJson" "summary" "FinalClassification"])))
+  (let [calculated-sig (get-in message ["scoreJson" "summary" "CalculatedClassification"])
+        final-sig (get-in message ["scoreJson" "summary" "FinalClassification"])]
+    (if (= final-sig "No Modification")
+      (get significance-map calculated-sig)
+      (get significance-map final-sig))))
 
 (defn get-mode-of-inheritance
   "Retrieve the HPO IRI for the mode of inheritance of the condition"
@@ -49,11 +53,14 @@
 (defn replace-previous-gci-curation
   "Test to see if there is a current, active curation from the GCI in the database
    if there is, mark it as invalidated by the current one"
-  [iri gci-id session]
+  [iri gci-id date session]
   (.run session "match (current:GeneDiseaseAssertion {iri: $iri})
-match (previous:GeneDiseaseAssertion {gci_id: $gci_id}) where not previous.iri = $iri and not (previous)-[:wasInvalidatedBy]->()
+match (previous:GeneDiseaseAssertion {gci_id: $gci_id}) where 
+not previous.iri = $iri 
+and not (previous)-[:wasInvalidatedBy]->()
+and previous.date < $date
 merge (previous)-[:wasInvalidatedBy]->(current)"
-        {"iri" iri, "gci_id" gci-id,}))
+        {"iri" iri, "gci_id" gci-id, "date" date}))
 
 
 ;; TODO take into account mode of inheritance
@@ -68,8 +75,8 @@ merge (previous)-[:wasInvalidatedBy]->(current)"
  match (previous:GeneDiseaseAssertion)
  where previous.gci_id is null
  and (previous)-[:has_subject]->(:Gene)<-[:has_subject]-(current)
- and 
- ((previous)-[:has_object]->(:RDFClass)<-[:has_object]-(current)
+ and not (previous)-[:wasInvalidatedBy]->()
+ and ((previous)-[:has_object]->(:RDFClass)<-[:has_object]-(current)
  or (previous)-[:has_object]->(:RDFClass)-[:equivalentTo]-(:RDFClass)<-[:has_object]-(current))
  merge (previous)-[:wasInvalidatedBy]->(current)" {"iri" iri}))
 
@@ -84,32 +91,30 @@ merge (previous)-[:wasInvalidatedBy]->(current)"
         attr-subset (select-keys message ["sopVersion" "curationVersion"
                                           "jsonMessageVersion" "title"])
         date (get-in message ["scoreJson" "summary" "FinalClassificationDate"])
-        iri (str (get message "iri") "--" date) ;; ID in DB is combination of gciid + date
+        trimmed-date (last (re-find #"^(.+)\." date)) ;; the time zone fits poorly in iris
+        iri (str (get message "iri") "--" trimmed-date) ;; ID in DB is combination of gciid + date
         moi (get-mode-of-inheritance message)
         curation-attributes (-> attr-subset (assoc "date" date)
-                                (assoc "score_gci" (serialize-score message))
-                                (assoc "gci_id" gci-id))
+                                (assoc "score_string_gci" (serialize-score message))
+                                (assoc "gci_id" gci-id)
+                                (assoc "perm_id" iri))
         significance (get-significance message)
         pub-status (get message "statusPublishFlag")]
-    (println "publishing" (get message "iri"))
-    (println conditions)
-    (println genes)
-    (println date)
     ;; TODO start here
-    (.run session "merge (a:GeneDiseaseAssertion:Assertion:Entity {iri: $iri})
-    with a
-    match (g:Gene) where g.hgnc_id in $genes
+    (println conditions)
+    (.run session "match (g:Gene) where g.hgnc_id in $genes
     match (c:RDFClass) where c.iri in $conditions
     match (s:Interpretation {iri: $significance})
     match (moi:RDFClass {iri: $moi})
+    merge (a:GeneDiseaseAssertion:Assertion:Entity {iri: $iri})
     set a += $attributes
     merge (a)-[:has_subject]->(g)
     merge (a)-[:has_object]->(c)
 merge (a)-[:has_predicate]->(s)
-merge (a)-[:has_object]->(moi)"
+merge (a)-[:has_mode_of_inheritance]->(moi)"
           {"genes" genes, "conditions" conditions, "attributes" curation-attributes,
            "significance" significance, "iri" iri, "moi" moi})
-    (replace-previous-gci-curation iri gci-id session)
+    (replace-previous-gci-curation iri gci-id date session)
     (replace-previous-gene-express-curation iri session)))
 
 (defn import-gene-validity-message
