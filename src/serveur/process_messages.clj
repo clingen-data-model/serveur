@@ -13,7 +13,7 @@
   [message session]
   (let [type (get message "type")]
     (case type
-      ;;"actionability" (actionability/import-actionability-message message session)
+      "actionability" (actionability/import-actionability-message message session)
       "clinicalValidity" (gene-validity/import-gene-validity-message message session)
       (println "no handler for type: " type ))))
 
