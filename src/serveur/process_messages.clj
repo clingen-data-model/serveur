@@ -43,7 +43,6 @@
     (neo/session
      [neo-session]
      (while true 
-       (println "polling")
        (let [records (.poll consumer 1000)]
          (doseq [r (seq records)]
            (process-message (-> r .value json/parse-string) neo-session)))))))

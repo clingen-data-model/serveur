@@ -1,6 +1,7 @@
 (ns serveur.gene-validity
   (require [serveur.neo4j :as neo]
-           [cheshire.core :as json]))
+           [cheshire.core :as json]
+           [clojure.pprint :as pp :refer [pprint]]))
 
 (def significance-map {"Conflicting Evidence Reported" "http://datamodel.clinicalgenome.org/terms/CG_000068"
                        "Definitive" "http://datamodel.clinicalgenome.org/terms/CG_000063"
@@ -90,7 +91,7 @@ merge (previous)-[:wasInvalidatedBy]->(current)"
         gci-id (get message "iri")
         attr-subset (select-keys message ["sopVersion" "curationVersion"
                                           "jsonMessageVersion" "title"])
-        date (get-in message ["scoreJson" "summary" "FinalClassificationDate"])
+        date (get-in message ["scoreJson" "summary" "FinalClassificationDate"] "")
         trimmed-date (last (re-find #"^(.+)\." date)) ;; the time zone fits poorly in iris
         iri (str (get message "iri") "--" trimmed-date) ;; ID in DB is combination of gciid + date
         moi (get-mode-of-inheritance message)
@@ -102,7 +103,10 @@ merge (previous)-[:wasInvalidatedBy]->(current)"
         pub-status (get message "statusPublishFlag")]
     ;; TODO start here
     (println conditions)
-    (.run session "match (g:Gene) where g.hgnc_id in $genes
+    (if (= "" date)
+      (do (println "no date provided for curation:")
+          (pprint message))
+      (.run session "match (g:Gene) where g.hgnc_id in $genes
     match (c:RDFClass) where c.iri in $conditions
     match (s:Interpretation {iri: $significance})
     match (moi:RDFClass {iri: $moi})
@@ -112,8 +116,8 @@ merge (previous)-[:wasInvalidatedBy]->(current)"
     merge (a)-[:has_object]->(c)
 merge (a)-[:has_predicate]->(s)
 merge (a)-[:has_mode_of_inheritance]->(moi)"
-          {"genes" genes, "conditions" conditions, "attributes" curation-attributes,
-           "significance" significance, "iri" iri, "moi" moi})
+            {"genes" genes, "conditions" conditions, "attributes" curation-attributes,
+             "significance" significance, "iri" iri, "moi" moi}))
     (replace-previous-gci-curation iri gci-id date session)
     (replace-previous-gene-express-curation iri session)))
 
