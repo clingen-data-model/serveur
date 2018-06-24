@@ -103,12 +103,14 @@ merge (i)-[:has_subject]->(top)"
         genes (map #(get % "curie") (get message "genes"))
         conditions (map #(get % "iri") (get message "conditions"))
         predicate (:top act-iris)]
+    (println "genes")
     (pprint genes)
+    (println "conditions")
     (pprint conditions)
     (.run session "merge (a:ActionabilityAssertion:Assertion:Entity {iri: $iri})
  with a
  match (g:Gene) where g.hgnc_id in $genes
- match (c:Condition) where c.iri in $conditions
+ match (r:RDFClass)-[:equivalentTo]-(c:DiseaseConcept) where r.iri in $conditions
  match (a)<-[:was_generated_by*1..5]-(n)
  detach delete n
  set a += $params 

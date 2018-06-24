@@ -12,6 +12,9 @@
                        "Refuted" "http://datamodel.clinicalgenome.org/terms/CG_000085"
                        "Strong" "http://datamodel.clinicalgenome.org/terms/CG_000064"})
 
+
+(def agents-root "https://search.clinicalgenome.org/kb/agents/")
+
 (defn conditions
   "Retrieve list of curies for condition"
   [message]
@@ -100,9 +103,15 @@ merge (previous)-[:wasInvalidatedBy]->(current)"
                                 (assoc "gci_id" gci-id)
                                 (assoc "perm_id" iri))
         significance (get-significance message)
-        pub-status (get message "statusPublishFlag")]
+        pub-status (get message "statusPublishFlag")
+        affiliation-id (str agents-root (get-in message ["affiliation" "id"]))
+        affiliation-name (get-in message ["affiliation" "name"])]
     ;; TODO start here
-    (println conditions)
+    (println "iri: " iri)
+    (println "date: " date)
+    (println "conditions: " conditions)
+    (println "significance: " significance)
+    (println "inheritance: " moi)
     (if (= "" date)
       (do (println "no date provided for curation:")
           (pprint message))
@@ -114,10 +123,14 @@ merge (previous)-[:wasInvalidatedBy]->(current)"
     set a += $attributes
     merge (a)-[:has_subject]->(g)
     merge (a)-[:has_object]->(c)
-merge (a)-[:has_predicate]->(s)
-merge (a)-[:has_mode_of_inheritance]->(moi)"
+    merge (a)-[:has_predicate]->(s)
+    merge (a)-[:has_mode_of_inheritance]->(moi)
+    merge (ag:Agent {iri: $affiliation_id})
+    merge (a)-[:wasAttributedto]->(ag)
+    set ag.label = $affiliation_name"
             {"genes" genes, "conditions" conditions, "attributes" curation-attributes,
-             "significance" significance, "iri" iri, "moi" moi}))
+             "significance" significance, "iri" iri, "moi" moi,
+             "affiliation_id" affiliation-id, "affiliation_name" affiliation-name}))
     (replace-previous-gci-curation iri gci-id date session)
     (replace-previous-gene-express-curation iri session)))
 
