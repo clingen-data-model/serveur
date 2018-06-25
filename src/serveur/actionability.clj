@@ -63,7 +63,7 @@
   "Called by intervention-actionability-outcome. Import each intervention into neo4j"
   [intervention parent-iri session]
   (let [iri (generate-local-iri)
-        params {"title" (get intervention "Intervention")}]
+        params {"label" (get intervention "Intervention")}]
     (.run session "match (top:Assertion {iri: $parent})
 merge (i:ActionabilityInterventionAssertion:Assertion:Entity {iri: $iri})
 set i += $params
@@ -78,7 +78,7 @@ merge (i)-[:has_subject]->(top)"
   [outcome parent-iri session]
   (println "importing outcome " (get outcome "Outcome"))
   (let [iri (generate-local-iri)
-        params {"title" (get outcome "Outcome")}]
+        params {"label" (get outcome "Outcome")}]
     (.run session
           "match (top:Assertion {iri: $parent})
  merge (outcome:ActionabilityOutcomeAssertion:Assertion:Entity {iri: $iri})
@@ -97,7 +97,7 @@ merge (i)-[:has_subject]->(top)"
   (println "importing actionability message for " (get message "title"))
   (let [iri (get message "iri")
         params {"version" (get message "curationVersion")
-                "title" (get message "title")
+                "label" (get message "title")
                 "date" (get message "dateISO8601")
                 "report" (get message "scoreDetails")}
         genes (map #(get % "curie") (get message "genes"))
