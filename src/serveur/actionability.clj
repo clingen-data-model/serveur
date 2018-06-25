@@ -111,7 +111,7 @@ merge (i)-[:has_subject]->(top)"
  with a
  match (g:Gene) where g.hgnc_id in $genes
  match (r:RDFClass)-[:equivalentTo]-(c:DiseaseConcept) where r.iri in $conditions
- match (a)<-[:was_generated_by*1..5]-(n)
+ optional match (a)<-[:was_generated_by*1..5]-(n)
  detach delete n
  set a += $params 
  merge (a)-[:has_subject]->(g)

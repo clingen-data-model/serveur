@@ -35,7 +35,11 @@
 (defn unpublish
   "Unpublish existing curation"
   [message session]
-  (println "unpublishing iri"))
+  (let [iri (get message "iri")]
+    (println "unpublishing iri: " iri)
+    (.run session "match (a:GeneDiseaseAssertion) where a.iri starts with $iri
+detach delete a"
+          {"iri" iri})))
 
 (defn get-significance
   "Given the message, return the appropriate clinical significance value"
@@ -138,10 +142,8 @@ merge (previous)-[:wasInvalidatedBy]->(current)"
   "Import message from gene validity into neo4j"
   [message session]
   (println "Importing gene validity message")
-  (publish message session)
-  ;; (let [status (get message "statusPublishFlag")]
-  ;;   (case status
-  ;;     "Unpublish" (unpublish message session)
-  ;;     "Publish" (publish message session)
-  ;;     (println "Error: unknown status")))
-  )
+  (let [status (get message "statusPublishFlag")]
+    (case status
+      "Unpublish" (unpublish message session)
+      "Publish" (publish message session)
+      (println "Error: unknown status"))))

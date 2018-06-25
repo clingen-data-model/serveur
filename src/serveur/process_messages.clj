@@ -4,6 +4,7 @@
             [cheshire.core :as json]
             [serveur.actionability :as actionability]
             [serveur.gene-validity :as gene-validity]
+            [serveur.dosage :as dosage]
             [clojure.pprint :refer [pprint]]
             [serveur.neo4j :as neo]
             [serveur.kafka :as kafka]))
@@ -15,7 +16,7 @@
     (case type
       "actionability" (actionability/import-actionability-message message session)
       "clinicalValidity" (gene-validity/import-gene-validity-message message session)
-      (println "no handler for type: " type ))))
+      (dosage/import-dosage-record message session))))
 
 (defn process-local-messages
   "Read DX messages from local data directory"
