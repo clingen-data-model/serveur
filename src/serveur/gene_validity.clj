@@ -129,7 +129,7 @@ merge (previous)-[:wasInvalidatedBy]->(current)"
     merge (a)-[:has_object]->(c)
     merge (a)-[:has_predicate]->(s)
     merge (a)-[:has_mode_of_inheritance]->(moi)
-    merge (ag:Agent {iri: $affiliation_id})
+    merge (ag:Agent:Entity {iri: $affiliation_id})
     merge (a)-[:wasAttributedto]->(ag)
     set ag.label = $affiliation_name"
             {"genes" genes, "conditions" conditions, "attributes" curation-attributes,
