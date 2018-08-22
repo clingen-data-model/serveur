@@ -85,7 +85,7 @@ merge (previous)-[:wasInvalidatedBy]->(current)"
  and (previous)-[:has_subject]->(:Gene)<-[:has_subject]-(current)
  and not (previous)-[:wasInvalidatedBy]->()
  and ((previous)-[:has_object]->(:RDFClass)<-[:has_object]-(current)
- or (previous)-[:has_object]->(:RDFClass)-[:equivalentTo]-(:RDFClass)<-[:has_object]-(current))
+ or (previous)-[:has_object]->(:RDFClass)-[:equivalentClass]-(:RDFClass)<-[:has_object]-(current))
  merge (previous)-[:wasInvalidatedBy]->(current)" {"iri" iri}))
 
 ;; TODO consider restructuring around a single transaction instead of multiple

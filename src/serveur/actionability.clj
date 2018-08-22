@@ -40,7 +40,7 @@
 (defn get-act-score-iri
   "Get the appropriate iri(s), given a score and a category"
   [category score]
-  (println "get-act-score-iri " score)
+;;  (println "get-act-score-iri " score)
   (if  (< 1 (count score))
     [((category act-iris) (read-string (subs score 0 1)))
      ((:evidence act-iris) (subs score 1 2))]
@@ -51,7 +51,7 @@
   [score category parent-iri session]
   (let [iri (generate-local-iri)
         scores (get-act-score-iri category score)]
-    (pprint scores)
+;;    (pprint scores)
     (when (first scores) ;; Only record computable scores--consider logging error otherwise
       (.run session "match (top:Assertion {iri: $parent}) match (str:RDFClass {iri: $score}) merge (s:ActionabilityScore:Assertion:Entity {iri: $iri}) merge (s)-[:was_generated_by]->(top) merge (s)-[:has_subject]->(top) merge (s)-[:has_predicate]->(str)"
             {"parent" parent-iri, "iri" iri, "score" (first scores)})
@@ -76,7 +76,7 @@ merge (i)-[:has_subject]->(top)"
 (defn import-actionability-outcome
   "called by import-actionability-message, import outcome score to neo4j"
   [outcome parent-iri session]
-  (println "importing outcome " (get outcome "Outcome"))
+  ;;(println "importing outcome " (get outcome "Outcome"))
   (let [iri (generate-local-iri)
         params {"label" (get outcome "Outcome")}]
     (.run session
@@ -102,15 +102,17 @@ merge (i)-[:has_subject]->(top)"
                 "report" (get message "scoreDetails")}
         genes (map #(get % "curie") (get message "genes"))
         conditions (map #(get % "iri") (get message "conditions"))
-        predicate (:top act-iris)]
-    (println "genes")
-    (pprint genes)
-    (println "conditions")
-    (pprint conditions)
+        predicate (:top act-iris)
+        action (get message "statusFlag")]
+    (println "action: " action " iri: " iri)
+    ;; (println "genes")
+    ;; (pprint genes)
+    ;; (println "conditions")
+    ;; (pprint conditions)
     (.run session "merge (a:ActionabilityAssertion:Assertion:Entity {iri: $iri})
  with a
  match (g:Gene) where g.hgnc_id in $genes
- match (r:RDFClass)-[:equivalentTo]-(c:DiseaseConcept) where r.iri in $conditions
+ match (r:RDFClass)-[:equivalentClass]-(c:DiseaseConcept) where r.iri in $conditions
  optional match (a)<-[:was_generated_by*1..5]-(n)
  detach delete n
  set a += $params 
