@@ -7,7 +7,7 @@ all:
     local_keystore_path: ~/code/serveur/keys/stage.serveur.keystore.jks
     keystore_path: /usr/local/serveur/keys/stage.serveur.keystore.jks
     kafka_group: serveur_stage
-    kafka_topics: "actionability;gene_validity_dev;gene_dosage"
+    kafka_topics: "actionability_dev;gene_validity_dev;gene_dosage"
     data_exchange_host: "exchange.clinicalgenome.org:9093"
     neo4j_server: "bolt://localhost"
     neo4j_user: neo4j
