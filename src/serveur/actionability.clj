@@ -15,6 +15,7 @@
                           2 "http://datamodel.clinicalgenome.org/terms/CG_000059"
                           3 "http://datamodel.clinicalgenome.org/terms/CG_000058"}
                :evidence {"E" "http://datamodel.clinicalgenome.org/terms/CG_000057"
+                          "N" "http://datamodel.clinicalgenome.org/terms/CG_000057"
                           "D" "http://datamodel.clinicalgenome.org/terms/CG_000056"
                           "C" "http://datamodel.clinicalgenome.org/terms/CG_000055"
                           "B" "http://datamodel.clinicalgenome.org/terms/CG_000054"
