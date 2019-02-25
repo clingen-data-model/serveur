@@ -106,11 +106,12 @@ merge (i)-[:has_subject]->(top)"
         predicate (:top act-iris)
         action (get message "statusFlag")]
     (println "action: " action " iri: " iri)
-    ;; (println "genes")
-    ;; (pprint genes)
-    ;; (println "conditions")
-    ;; (pprint conditions)
-    (.run session "merge (a:ActionabilityAssertion:Assertion:Entity {iri: $iri})
+    (when (and (= "Released" action) (re-matches #"^https://actionability\.clinicalgenome\.org/ac.*" iri))
+      ;; (println "genes")
+      ;; (pprint genes)
+      ;; (println "conditions")
+      ;; (pprint conditions)
+      (.run session "merge (a:ActionabilityAssertion:Assertion:Entity {iri: $iri})
  with a
  match (g:Gene) where g.hgnc_id in $genes
  match (r:RDFClass)-[:equivalentClass]-(c:DiseaseConcept) where r.iri in $conditions
@@ -119,7 +120,7 @@ merge (i)-[:has_subject]->(top)"
  set a += $params 
  merge (a)-[:has_subject]->(g)
  merge (a)-[:has_object]->(c)"
-          {"iri" iri, "params" params, "genes" genes, "conditions" conditions})
-    (doseq [outcome (get message "scores")]
-      (import-actionability-outcome outcome iri session))))
+            {"iri" iri, "params" params, "genes" genes, "conditions" conditions})
+      (doseq [outcome (get message "scores")]
+        (import-actionability-outcome outcome iri session)))))
 

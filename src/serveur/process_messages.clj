@@ -46,5 +46,7 @@
      (while true 
        (let [records (.poll consumer 1000)]
          (doseq [r (seq records)]
-           (process-message (-> r .value json/parse-string) neo-session)))))))
+           (try 
+             (process-message (-> r .value json/parse-string) neo-session)
+             (catch Exception e (println "Caught exception: " (.getMessage e))))))))))
 
