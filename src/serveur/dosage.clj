@@ -11,8 +11,8 @@
   ;; (spit (str "./log/" (re-find #"[\w-]+$" (.key record))) record)
   (println "importing: " (record "id"))
   (log/info "importing: " (with-out-str (pprint record)))
-  ;; TODO clear relations before updating an assertion
-  (.run session "match (g:Gene {iri: $gene}), (i:RDFClass {iri: $interpretation}) merge (a:GeneDosageAssertion:Assertion:Entity {iri: $id}) set a.date = $modified merge (a)-[:has_subject]->(g) merge (a)-[:has_predicate]->(i) with a match (d:RDFClass {iri: $phenotype}) merge (a)-[:has_object]->(d)" record))
+  (.run session "match (a:GeneDosageAssertion {iri: $id})-[r:has_predicate]->() delete r with a match (a)-[r:has_object]->() delete r" record)
+  (.run session "match (g:Gene {iri: $gene}), (i:RDFClass {iri: $interpretation}) merge (a:GeneDosageAssertion:Assertion:Entity {iri: $id}) set a.date = $modified merge (a)-[:has_subject]->(g) merge (a)-[:has_predicate]->(i) with a match (d:RDFClass {iri: $phenotype})-[:equivalentTo]-(dc:DiseaseConcept) merge (a)-[:has_object]->(dc)" record))
 
 (defn import-region-dosage-record
   "Import a single region-dosage record into neo4j"
