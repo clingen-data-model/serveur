@@ -83,6 +83,7 @@ merge (previous)-[:wasInvalidatedBy]->(current)"
  match (previous:GeneDiseaseAssertion)
  where previous.gci_id is null
  and (previous)-[:has_subject]->(:Gene)<-[:has_subject]-(current)
+ and (previous)-[:has_mode_of_inheritance]->(:Resource)<-[:has_mode_of_inheritance]-(current)
  and not (previous)-[:wasInvalidatedBy]->()
  and ((previous)-[:has_object]->(:RDFClass)<-[:has_object]-(current)
  or (previous)-[:has_object]->(:RDFClass)-[:equivalentClass]-(:RDFClass)<-[:has_object]-(current))
