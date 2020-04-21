@@ -9,6 +9,8 @@
                        "Limited" "http://datamodel.clinicalgenome.org/terms/CG_000066"
                        "Moderate" "http://datamodel.clinicalgenome.org/terms/CG_000065"
                        "No Reported Evidence" "http://datamodel.clinicalgenome.org/terms/CG_000067" 
+                       "No Known Disease Relationship" "http://datamodel.clinicalgenome.org/terms/CG_000067" 
+                       "No Classification" "http://datamodel.clinicalgenome.org/terms/CG_000067" 
                        "Refuted" "http://datamodel.clinicalgenome.org/terms/CG_000085"
                        "Strong" "http://datamodel.clinicalgenome.org/terms/CG_000064"})
 

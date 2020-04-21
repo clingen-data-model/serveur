@@ -1,5 +1,11 @@
 - hosts: all
   tasks: 
+    - name: Stop Serveur, if running
+      become: true
+      systemd:
+        name: serveur
+        state: stopped
+        enabled: yes
     - name: Install java-8
       become: true
       apt:

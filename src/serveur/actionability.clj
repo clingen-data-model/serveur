@@ -5,6 +5,8 @@
             [clojure.tools.logging :as log]
             [clojure.pprint :refer [pprint]]))
 
+(def agents-root "https://search.clinicalgenome.org/kb/agents/")
+
 (def iri-prefixes {:omim "http://purl.obolibrary.org/obo/OMIM_"
                    :local "http://search.clinicalgenome.org/kb/entity/"})
 
@@ -98,13 +100,15 @@ merge (i)-[:has_subject]->(top)"
   (println "importing actionability message for " (get message "title"))
   (let [iri (get message "iri")
         params {"version" (get message "curationVersion")
-                "label" (get message "title")
+                  "label" (get message "title")
                 "date" (get message "dateISO8601")
                 "report" (get message "scoreDetails")}
         genes (map #(get % "curie") (get message "genes"))
         conditions (map #(get % "iri") (get message "conditions"))
         predicate (:top act-iris)
-        action (get message "statusFlag")]
+        action (get message "statusFlag")
+        affiliation-id (str agents-root (get-in message ["affiliation" "id"]))
+        affiliation-name (get-in message ["affiliation" "name"])]
     (println "action: " action " iri: " iri)
     (when (and (= "Released" action) (re-matches #"^https://actionability\.clinicalgenome\.org/ac.*" iri))
       ;; (println "genes")
@@ -119,8 +123,11 @@ merge (i)-[:has_subject]->(top)"
  detach delete n
  set a += $params 
  merge (a)-[:has_subject]->(g)
- merge (a)-[:has_object]->(c)"
-            {"iri" iri, "params" params, "genes" genes, "conditions" conditions})
+ merge (a)-[:has_object]->(c)
+ merge (ag:Agent:Entity {iri: $affiliation_id})
+ set ag.label = $affiliation_name
+ merge (a)-[:wasAttributedto]->(ag)"
+            {"iri" iri, "params" params, "genes" genes, "conditions" conditions, "affiliation_id" affiliation-id, "affiliation_name", affiliation-name})
       (doseq [outcome (get message "scores")]
         (import-actionability-outcome outcome iri session)))))
 
