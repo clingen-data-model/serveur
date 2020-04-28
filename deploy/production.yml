@@ -3,7 +3,7 @@ all:
     search.clinicalgenome.org
   vars:
     ansible_user: ubuntu
-    ansible_ssh_private_key_file: /Users/tristan/Dropbox/clingen/clinicalgenome.org.key
+    ansible_ssh_private_key_file: "/Users/tristan/Google Drive/clingen-keys/clinicalgenome.org.key"
     local_keystore_path: ~/code/serveur/keys/serveur.keystore.jks
     keystore_path: /usr/local/serveur/keys/serveur.keystore.jks
     kafka_group: serveur

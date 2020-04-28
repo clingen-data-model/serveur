@@ -118,16 +118,24 @@ merge (i)-[:has_subject]->(top)"
       (.run session "merge (a:ActionabilityAssertion:Assertion:Entity {iri: $iri})
  with a
  match (g:Gene) where g.hgnc_id in $genes
- match (r:RDFClass)-[:equivalentClass]-(c:DiseaseConcept) where r.iri in $conditions
  optional match (a)<-[:was_generated_by*1..5]-(n)
  detach delete n
  set a += $params 
  merge (a)-[:has_subject]->(g)
- merge (a)-[:has_object]->(c)
  merge (ag:Agent:Entity {iri: $affiliation_id})
  set ag.label = $affiliation_name
  merge (a)-[:wasAttributedto]->(ag)"
             {"iri" iri, "params" params, "genes" genes, "conditions" conditions, "affiliation_id" affiliation-id, "affiliation_name", affiliation-name})
+      (.run session "match
+ (r:RDFClass)-[:equivalentClass]-(c:DiseaseConcept), 
+ (a {iri: $iri})
+  where r.iri in $conditions
+  merge (a)-[:has_object]->(c)" {"iri" iri, "conditions" conditions})
+      (.run session "match
+ (c:DiseaseConcept), 
+ (a {iri: $iri})
+  where c.iri in $conditions
+  merge (a)-[:has_object]->(c)" {"iri" iri, "conditions" conditions})
       (doseq [outcome (get message "scores")]
         (import-actionability-outcome outcome iri session)))))
 
