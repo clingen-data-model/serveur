@@ -110,7 +110,9 @@ merge (i)-[:has_subject]->(top)"
         affiliation-id (str agents-root (get-in message ["affiliation" "id"]))
         affiliation-name (get-in message ["affiliation" "name"])]
     (println "action: " action " iri: " iri)
-    (when (and (= "Released" action) (re-matches #"^https://actionability\.clinicalgenome\.org/ac.*" iri))
+    (when (and (= "Released" action) 
+               (or (re-matches #"^https://actionability\.clinicalgenome\.org/ac.*" iri)
+                   (re-matches #"^https://actionability\.test\.genome\.network/ac.*" iri)))
       ;; (println "genes")
       ;; (pprint genes)
       ;; (println "conditions")
