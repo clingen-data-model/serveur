@@ -11,7 +11,7 @@
    "value.deserializer" "org.apache.kafka.common.serialization.StringDeserializer"
    "security.protocol" "SSL"
    "ssl.truststore.location" "keys/serveur.truststore.jks"
-   "ssl.truststore.password" (System/getenv "SERVEUR_KEY_PASS")
+   "ssl.truststore.password" (System/getenv "SERVEUR_TRUST_PASS")
    "ssl.keystore.location" (System/getenv "SERVEUR_KEYSTORE")
    "ssl.keystore.password" (System/getenv "SERVEUR_KEY_PASS")
    "ssl.key.password" (System/getenv "SERVEUR_KEY_PASS")})

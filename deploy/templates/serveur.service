@@ -8,6 +8,7 @@ User=serveur
 Group=serveur
 WorkingDirectory=/usr/local/serveur
 Environment=SERVEUR_KEY_PASS={{ serveur_key_pass }}
+Environment=SERVEUR_TRUST_PASS={{ serveur_trust_pass }}
 Environment=DATA_EXCHANGE_HOST={{ data_exchange_host }}
 Environment=NEO4J_SERVER_PATH={{ neo4j_server }}
 Environment=NEO4J_USER={{ neo4j_user }}

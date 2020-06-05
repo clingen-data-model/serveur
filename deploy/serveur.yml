@@ -1,18 +1,5 @@
 - hosts: all
   tasks: 
-    - name: Stop Serveur, if running
-      become: true
-      systemd:
-        name: serveur
-        state: stopped
-        enabled: yes
-    - name: Install java-8
-      become: true
-      apt:
-        name: openjdk-8-jdk
-    - name: Set java8 to default
-      become: true
-      command: /usr/sbin/update-java-alternatives -s java-1.8.0-openjdk-amd64
     - name: Compile uberjar for serveur
       local_action: command lein uberjar
     - name: Setup group
@@ -69,7 +56,7 @@
     - name: Copy uberjar to target
       become: true
       copy:
-        src: ~/code/serveur/target/uberjar/serveur-0.1.0-SNAPSHOT-standalone.jar
+        src: ~/Projects/ClinGen/serveur/target/uberjar/serveur-0.1.0-SNAPSHOT-standalone.jar
         dest: /usr/local/serveur/lib
         owner: serveur
         group: serveur
@@ -85,7 +72,7 @@
     - name: Copy current truststore to target
       become: true
       copy:
-        src: ~/code/serveur/keys/serveur.truststore.jks
+        src: ~/Projects/ClinGen/serveur/keys/serveur.truststore.jks
         dest: /usr/local/serveur/keys
         owner: serveur
         group: serveur
