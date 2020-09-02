@@ -19,4 +19,5 @@
                                                     com.sun.jmx/jmxri]]]
   :main ^:skip-aot serveur.core
   :target-path "target/%s"
-  :profiles {:uberjar {:aot :all}})
+  :profiles {:uberjar {:aot :all
+                       :uberjar-name "serveur.jar"}})
